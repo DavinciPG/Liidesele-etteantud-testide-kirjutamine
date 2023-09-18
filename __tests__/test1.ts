@@ -1,9 +1,10 @@
-import {Adder, SimpleAdder} from "../index";
+import {Adder, StoringAdder, CharCounter } from "../index";
 
-let adder: Adder;
-
+let charCounter: CharCounter;
+let adder: StoringAdder;
 beforeEach(() => {
-    adder=new SimpleAdder();
+    adder=new StoringAdder();
+    charCounter = new CharCounter(adder);
 })
 
 test('start', () => {
@@ -21,9 +22,40 @@ test('two values', () => {
     expect(adder.getSum()).toBe(8);
 });
 
-test('after zeroing functions correctly', () => {
-   adder.add(6);
+test('two values range', () => {
+    adder.add(3);
+    adder.add(5);
+    expect(adder.getRange()).toBe(2);
+});
+
+test('zeroing', () => {
+   adder.add(3);
    adder.zero();
-   adder.add(6);
-   expect(adder.getSum()).toBe(6);
+   expect(adder.getSum()).toBe(0);
+});
+
+test('calculate word lengths', () => {
+    charCounter.addWordCharacters("apple");
+    charCounter.addWordCharacters("banana");
+    charCounter.addWordCharacters("cherry");
+
+    expect(adder.getSum()).toBe(17);
+});
+
+test('reset CharCounter', () => {
+    charCounter.addWordCharacters("apple");
+    charCounter.zero();
+    charCounter.addWordCharacters("banana");
+
+    expect(adder.getSum()).toBe(6);
+});
+
+test('find longest word length', () => {
+    charCounter.addWordCharacters("apple");
+    charCounter.addWordCharacters("banana");
+    charCounter.addWordCharacters("cherry");
+
+    const longestLength = charCounter.getLongestWordLength();
+
+    expect(longestLength).toBe(6);
 });
