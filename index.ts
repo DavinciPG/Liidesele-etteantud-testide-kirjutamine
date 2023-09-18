@@ -3,37 +3,47 @@ interface Adder{
     getSum():number;
 }
 
-class CharCounter {
-    constructor(protected adder: Adder) {}
-
-    addWordCharacters(word: string): void {
+class CharCounter{
+    constructor(protected adder:Adder){}
+    addWordCharacters(word:string):void{
         this.adder.add(word.length);
     }
-
-    getCharacterCount(): number {
+    getCharacterCount(){
         return this.adder.getSum();
-    }
-
-    // New method to calculate the sum of lengths of words in an array
-    addWordsCharacters(words: string[]): void {
-        for (const word of words) {
-            this.addWordCharacters(word);
-        }
     }
 }
 
-class SimpleAdder implements Adder{
+class CountingAdder implements Adder{
     protected sum:number=0;
-    add(nr:number){this.sum+=nr;}
+    protected count:number=0;
+    protected max: number | null = null;
+    add(nr:number){
+        this.sum+=nr;
+        this.count++;
+
+        if (this.max === null || nr > this.max) {
+            this.max = nr;
+        }
+    }
     getSum(): number {
         return this.sum;
     }
+    getAverage(){
+        if(this.count>0){
+            return this.sum/this.count;
+        }
+        return 0;
+    }
+    getMax(): number | null {
+        return this.max;
+    }
 }
 
-let adder1:Adder=new SimpleAdder();
+let adder1:CountingAdder=new CountingAdder();
 let counter1:CharCounter=new CharCounter(adder1);
-
-const words = ["Juku", "tuli", "kooli"];
-counter1.addWordsCharacters(words);
-
+counter1.addWordCharacters("Juku");
+counter1.addWordCharacters("tuli");
+counter1.addWordCharacters("kooli");
 console.log(counter1.getCharacterCount());
+console.log(adder1.getAverage());
+console.log(adder1.getMax());
