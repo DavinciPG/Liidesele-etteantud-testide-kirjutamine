@@ -1,74 +1,106 @@
-var CharCounter = /** @class */ (function () {
-    function CharCounter(adder) {
-        this.adder = adder;
+var TollidSentimeetriteks = /** @class */ (function () {
+    function TollidSentimeetriteks() {
     }
-    CharCounter.prototype.addWordCharacters = function (word) {
-        this.adder.add(word.length);
+    TollidSentimeetriteks.prototype.arvuta = function (tollid) {
+        return tollid * 2.54;
     };
-    CharCounter.prototype.getCharacterCount = function () {
-        return this.adder.getSum();
+    TollidSentimeetriteks.prototype.sisendMõõtühik = function () {
+        return "toll";
     };
-    return CharCounter;
+    TollidSentimeetriteks.prototype.väljundMõõtühik = function () {
+        return "cm";
+    };
+    return TollidSentimeetriteks;
 }());
-var StoringAdder = /** @class */ (function () {
-    function StoringAdder() {
-        this.store = [];
+var DetsimeetridMillimeetriteks = /** @class */ (function () {
+    function DetsimeetridMillimeetriteks() {
     }
-    StoringAdder.prototype.add = function (nr) {
-        this.store.push(nr);
+    DetsimeetridMillimeetriteks.prototype.arvuta = function (detsimeetrid) {
+        return detsimeetrid * 10;
     };
-    StoringAdder.prototype.getSum = function () {
-        var sum = 0;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            sum += amount;
-        }
-        return sum;
+    DetsimeetridMillimeetriteks.prototype.sisendMõõtühik = function () {
+        return "dm";
     };
-    StoringAdder.prototype.getAverage = function () {
-        if (this.store.length > 0) {
-            return this.getSum() / this.store.length;
-        }
-        return 0;
+    DetsimeetridMillimeetriteks.prototype.väljundMõõtühik = function () {
+        return "mm";
     };
-    StoringAdder.prototype.getRange = function () {
-        if (this.store.length == 0) {
-            return 0;
-        }
-        var minimum = this.store[0];
-        var maximum = minimum;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            if (amount < minimum) {
-                minimum = amount;
-            }
-            if (amount > maximum) {
-                maximum = amount;
-            }
-        }
-        return maximum - minimum;
-    };
-    StoringAdder.prototype.getMax = function () {
-        if (this.store.length === 0) {
-            return 0;
-        }
-        var maximum = this.store[0];
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            if (amount > maximum) {
-                maximum = amount;
-            }
-        }
-        return maximum;
-    };
-    return StoringAdder;
+    return DetsimeetridMillimeetriteks;
 }());
-var adder1 = new StoringAdder();
-var counter1 = new CharCounter(adder1);
-counter1.addWordCharacters("Juku");
-counter1.addWordCharacters("tuli");
-counter1.addWordCharacters("kooli");
-console.log(counter1.getCharacterCount());
-console.log(adder1.getAverage());
-console.log(adder1.getRange());
-console.log(adder1.getMax());
+var TemperatuuriTeisendaja = /** @class */ (function () {
+    function TemperatuuriTeisendaja(kordaja) {
+        this.kordaja = kordaja;
+    }
+    TemperatuuriTeisendaja.prototype.arvuta = function (celsium) {
+        return (celsium * this.kordaja) + 32;
+    };
+    TemperatuuriTeisendaja.prototype.sisendMõõtühik = function () {
+        return "°C";
+    };
+    TemperatuuriTeisendaja.prototype.väljundMõõtühik = function () {
+        return "°F";
+    };
+    return TemperatuuriTeisendaja;
+}());
+var TaksoHind = /** @class */ (function () {
+    function TaksoHind(kordaja, vabaLiige) {
+        this.kordaja = kordaja;
+        this.vabaLiige = vabaLiige;
+    }
+    TaksoHind.prototype.arvuta = function (kilomeetrid) {
+        return this.vabaLiige + (kilomeetrid * this.kordaja);
+    };
+    TaksoHind.prototype.sisendMõõtühik = function () {
+        return "km";
+    };
+    TaksoHind.prototype.väljundMõõtühik = function () {
+        return "€";
+    };
+    return TaksoHind;
+}());
+var ArvutusteLadu = /** @class */ (function () {
+    function ArvutusteLadu(arvutusfunktsioon) {
+        this.arvutusfunktsioon = arvutusfunktsioon;
+        this.sisendid = [];
+        this.tulemused = [];
+    }
+    ArvutusteLadu.prototype.lisaSisend = function (x) {
+        this.sisendid.push(x);
+        this.tulemused.push(this.arvutusfunktsioon.arvuta(x));
+    };
+    ArvutusteLadu.prototype.kuvatudTulemused = function () {
+        var tulemused = [];
+        for (var i = 0; i < this.sisendid.length; i++) {
+            var sisend = this.sisendid[i];
+            var tulemus = this.tulemused[i];
+            var sisendMõõtühik = this.arvutusfunktsioon.sisendMõõtühik();
+            var väljundMõõtühik = this.arvutusfunktsioon.väljundMõõtühik();
+            tulemused.push("".concat(sisend, " ").concat(sisendMõõtühik, " - ").concat(tulemus, " ").concat(väljundMõõtühik));
+        }
+        return tulemused.join("\n");
+    };
+    return ArvutusteLadu;
+}());
+var tollidSentimeetriteks = new TollidSentimeetriteks();
+var arvutusteLadu1 = new ArvutusteLadu(tollidSentimeetriteks);
+arvutusteLadu1.lisaSisend(20);
+arvutusteLadu1.lisaSisend(50);
+console.log("1. Tollid sentimeetriteks:");
+console.log(arvutusteLadu1.kuvatudTulemused());
+var detsimeetridMillimeetriteks = new DetsimeetridMillimeetriteks();
+var arvutusteLadu2 = new ArvutusteLadu(detsimeetridMillimeetriteks);
+arvutusteLadu2.lisaSisend(20);
+arvutusteLadu2.lisaSisend(50);
+console.log("\n2. Detsimeetrid millimeetriteks:");
+console.log(arvutusteLadu2.kuvatudTulemused());
+var temperatuuriTeisendaja = new TemperatuuriTeisendaja(1.8);
+var arvutusteLadu3 = new ArvutusteLadu(temperatuuriTeisendaja);
+arvutusteLadu3.lisaSisend(0);
+arvutusteLadu3.lisaSisend(100);
+console.log("\n3. Temperatuuri teisendamine:");
+console.log(arvutusteLadu3.kuvatudTulemused());
+var taksoHind = new TaksoHind(0.8, 2);
+var arvutusteLadu4 = new ArvutusteLadu(taksoHind);
+arvutusteLadu4.lisaSisend(5);
+arvutusteLadu4.lisaSisend(10);
+console.log("\n4. Takso hind:");
+console.log(arvutusteLadu4.kuvatudTulemused());
